@@ -25,100 +25,101 @@ import org.usfirst.frc.team3274.robot.subsystems.Shooter;
  * directory.
  */
 public class Robot extends IterativeRobot {
-	Command autonomousCommand;
-	public static OI oi;
+    Command autonomousCommand;
+    public static OI oi;
+    public static boolean isTeleop;
 
-	// Initialize the subsystems
-	public static DriveTrain drivetrain = new DriveTrain();
-	public static Collector collector = new Collector();
-	public static Shooter shooter = new Shooter();
-	public static Pneumatics pneumatics = new Pneumatics();
-	public static Pivot pivot = new Pivot();
+    // Initialize the subsystems
+    public static DriveTrain drivetrain = new DriveTrain();
 
-	public SendableChooser autoChooser;
-	public SendableChooser autonomousDirectionChooser;
+    public SendableChooser autoChooser;
+    public SendableChooser autonomousDirectionChooser;
 
-	// This function is run when the robot is first started up and should be
-	// used for any initialization code.
-	@Override
-	public void robotInit() {
-		SmartDashboard.putData(drivetrain);
-		SmartDashboard.putData(collector);
-		SmartDashboard.putData(shooter);
-		SmartDashboard.putData(pneumatics);
-		SmartDashboard.putData(pivot);
+    // This function is run when the robot is first started up and should be
+    // used for any initialization code.
+    @Override
+    public void robotInit() {
+        SmartDashboard.putData(drivetrain);
 
-		// This MUST be here. If the OI creates Commands (which it very likely
-		// will), constructing it during the construction of CommandBase (from
-		// which commands extend), subsystems are not guaranteed to be
-		// yet. Thus, their requires() statements may grab null pointers. Bad
-		// news. Don't move it.
-		oi = new OI();
+        // This MUST be here. If the OI creates Commands (which it very likely
+        // will), constructing it during the construction of CommandBase (from
+        // which commands extend), subsystems are not guaranteed to be
+        // yet. Thus, their requires() statements may grab null pointers. Bad
+        // news. Don't move it.
+        oi = new OI();
 
-		// instantiate the command used for the autonomous period
-		autoChooser = new SendableChooser();
-		autoChooser.addDefault("Drive and Shoot", new DriveAndShootAutonomous());
-		autoChooser.addObject("Drive Forward", new DriveForward());
-		SmartDashboard.putData("Auto Mode", autoChooser);
+        isTeleop = false;
 
-		pneumatics.start(); // Pressurize the pneumatics.
-	}
+// // instantiate the command used for the autonomous period
+// autoChooser = new SendableChooser();
+// autoChooser.addDefault("Drive and Shoot", new DriveAndShootAutonomous());
+// autoChooser.addObject("Drive Forward", new DriveForward());
+// SmartDashboard.putData("Auto Mode", autoChooser);
+    }
 
-	@Override
-	public void autonomousInit() {
-		autonomousCommand = (Command) autoChooser.getSelected();
-		autonomousCommand.start();
-	}
+    @Override
+    public void autonomousInit() {
+        autonomousCommand = (Command) autoChooser.getSelected();
+        autonomousCommand.start();
+        isTeleop = false;
+    }
 
-	// This function is called periodically during autonomous
-	@Override
-	public void autonomousPeriodic() {
-		Scheduler.getInstance().run();
-		log();
-	}
+    // This function is called periodically during autonomous
+    @Override
+    public void autonomousPeriodic() {
+        Scheduler.getInstance().run();
+        log();
+    }
 
-	@Override
-	public void teleopInit() {
-		// This makes sure that the autonomous stops running when
-		// teleop starts running. If you want the autonomous to
-		// continue until interrupted by another command, remove
-		// this line or comment it out.
-		if (autonomousCommand != null) {
-			autonomousCommand.cancel();
-		}
-	}
+    @Override
+    public void teleopInit() {
+        // This makes sure that the autonomous stops running when
+        // teleop starts running. If you want the autonomous to
+        // continue until interrupted by another command, remove
+        // this line or comment it out.
+        if (autonomousCommand != null) {
+            autonomousCommand.cancel();
+        }
+        isTeleop = true;
 
-	// This function is called periodically during operator control
-	@Override
-	public void teleopPeriodic() {
-		Scheduler.getInstance().run();
-		log();
-	}
+        // instantiate commands for teleop driving
+        autoChooser.addDefault("Drive and Shoot",
+                new DriveAndShootAutonomous());
+    }
 
-	// This function called periodically during test mode
-	@Override
-	public void testPeriodic() {
-		LiveWindow.run();
-	}
+    // This function is called periodically during operator control
+    @Override
+    public void teleopPeriodic() {
+        Scheduler.getInstance().run();
+        log();
+    }
 
-	@Override
-	public void disabledInit() {
-		Robot.shooter.unlatch();
-	}
+    // This function called periodically during test mode
+    @Override
+    public void testPeriodic() {
+        LiveWindow.run();
+    }
 
-	// This function is called periodically while disabled
-	@Override
-	public void disabledPeriodic() {
-		log();
-	}
+    @Override
+    public void disabledInit() {
 
-	/**
-	 * Log interesting values to the SmartDashboard.
-	 */
-	private void log() {
-		Robot.pneumatics.writePressure();
-		SmartDashboard.putNumber("Pivot Pot Value", Robot.pivot.getAngle());
-		SmartDashboard.putNumber("Left Distance", drivetrain.getLeftEncoder().getDistance());
-		SmartDashboard.putNumber("Right Distance", drivetrain.getRightEncoder().getDistance());
-	}
+    }
+
+    // This function is called periodically while disabled
+    @Override
+    public void disabledPeriodic() {
+        log();
+    }
+
+    /**
+     * Log interesting values to the SmartDashboard.
+     */
+    private void log() {
+// Robot.pneumatics.writePressure();
+// SmartDashboard.putNumber("Pivot Pot Value", Robot.pivot.getAngle());
+// SmartDashboard.putNumber("Left Distance",
+// drivetrain.getLeftEncoder().getDistance());
+// SmartDashboard.putNumber("Right Distance",
+// drivetrain.getRightEncoder().getDistance());
+    }
 }
