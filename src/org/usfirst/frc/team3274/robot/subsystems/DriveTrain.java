@@ -89,6 +89,9 @@ public class DriveTrain extends Subsystem {
     }
 
     /**
+     * Drive the wheels on one side forward with one stick and the wheels on
+     * another side forward with another stick.
+     * 
      * @param joy
      *            PS3 style joystick to use as the input for tank drive.
      */
@@ -124,6 +127,15 @@ public class DriveTrain extends Subsystem {
         return result;
     }
 
+    /**
+     * Drive the wheels on one side forward with one stick and the wheels on
+     * another side forward with another stick.
+     * 
+     * @param leftAxis
+     *            left stick y-axis
+     * @param rightAxis
+     *            right stick y-axis
+     */
     public void tankDrive(double leftAxis, double rightAxis) {
         double lJoyStickVal = 0.0;
         double rJoyStickVal = 0.0;
@@ -144,6 +156,60 @@ public class DriveTrain extends Subsystem {
         drive.tankDrive(-1 * lJoyStickVal, -rJoyStickVal);
         Timer.delay(0.005); // wait for a motor update time
 
+    }
+
+    /**
+     * Use y-axis on left stick for power and x-axis on right stick for turning.
+     * 
+     * @param joy
+     *            joystick
+     */
+    public void carDrive(Joystick joy) {
+        this.carDrive(joy.getRawAxis(1), joy.getRawAxis(4));
+    }
+
+    /**
+     * Use y-axis on left stick for power and x-axis on right stick for turning.
+     * 
+     * @param leftAxis
+     *            y-axis of left stick
+     * @param rightAxis
+     *            x-axis of right stick
+     */
+    public void carDrive(double leftAxis, double rightAxis) {
+       
+        double lJoyStickVal = 0.0;
+        double rJoyStickVal = 0.0;
+        
+        double leftPower;
+        double rightPower;
+        
+        // Setting up Deadzones
+        if ((leftAxis < 0.5) && (leftAxis > -0.5)) {
+            lJoyStickVal = 0.0;
+        } else {
+            lJoyStickVal = leftAxis;
+        }
+
+        if ((rightAxis < 0.5) && (rightAxis > -0.5)) {
+            rJoyStickVal = 0.0;
+        } else {
+            rJoyStickVal = rightAxis;
+        }
+        
+        // convert to left and right power
+        leftPower = lJoyStickVal;
+        rightPower = lJoyStickVal;
+        
+        
+        if (rJoyStickVal > 0){
+            leftPower = leftPower * rJoyStickVal;
+        } else {
+            rightPower = rightPower * Math.abs(rJoyStickVal);
+        }
+        
+        drive.tankDrive(-leftPower, -rightPower);
+        Timer.delay(0.005); // wait for a motor update time
     }
 
     /**
