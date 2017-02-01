@@ -37,13 +37,19 @@ public class DriveTrain extends Subsystem {
 
     public DriveTrain() {
 
+        /*
+         * About 'Casting' variables In the code above, we have defined the
+         * wheels as SpeedControllers, a Java Interface and not a Class. For
+         * some reason the methods below expects Motors. Via the magic of
+         * polymorphism we can change the SpeedControllers into CANTalons.
+         */
         // Configure drive motors
         LiveWindow.addActuator("DriveTrain", "Front Left CIM",
                 (CANTalon) _frontLeftMotor);
         LiveWindow.addActuator("DriveTrain", "Front Right CIM",
                 (CANTalon) _frontRightMotor);
         LiveWindow.addActuator("DriveTrain", "Back Left CIM",
-                (CANTalon) _frontRightMotor);
+                (CANTalon) _rearLeftMotor);
         LiveWindow.addActuator("DriveTrain", "Back Right CIM",
                 (CANTalon) _rearRightMotor);
 
@@ -91,15 +97,38 @@ public class DriveTrain extends Subsystem {
     }
 
     /**
+     * Drive by giving left and right side values
+     * 
      * @param leftAxis
      *            Left sides value
      * @param rightAxis
      *            Right sides value
      */
+    /*
+     * Nathan, if you are anything like me, you may be saying to yourself 'But
+     * this method has the same name as the one above it! Why and how does this
+     * work!? This makes me scared and unsure about the future!'. Well fear not
+     * because there is a simple explanation. Java allows us to 'overload'
+     * methods, that is define the same method multiple times, but with
+     * different numbers of parameters. This is useful if we want a version of
+     * the method to do a default and a version that we can supply values to.
+     */
+
+    // Checks to see if a number (variable) is in a certain range (rangeFrom)
+    // from a certain point (point)
+    public boolean inRange(double variable, double point, double rangeFrom) {
+        boolean result = false;
+        if (variable < (point + rangeFrom) && variable > (point - rangeFrom)) {
+            result = true;
+        }
+        return result;
+    }
+
     public void tankDrive(double leftAxis, double rightAxis) {
         double lJoyStickVal = 0.0;
         double rJoyStickVal = 0.0;
 
+        // Setting up Deadzones
         if ((leftAxis < 0.5) && (leftAxis > -0.5)) {
             lJoyStickVal = 0.0;
         } else {
