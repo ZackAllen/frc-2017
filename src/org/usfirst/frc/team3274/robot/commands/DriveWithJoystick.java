@@ -21,7 +21,7 @@ public class DriveWithJoystick extends Command {
      */
     @Override
     protected void execute() {
-        Robot.drivetrain.tankDrive(Robot.oi.getJoystick());
+        Robot.drivetrain.carDrive(Robot.oi.getJoystick());
     }
 
     @Override
