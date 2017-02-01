@@ -177,16 +177,19 @@ public class DriveTrain extends Subsystem {
      *            x-axis of right stick
      */
     public void carDrive(double leftAxis, double rightAxis) {
-       
+
+        boolean inLDeadZone = false;
+
         double lJoyStickVal = 0.0;
         double rJoyStickVal = 0.0;
-        
+
         double leftPower;
         double rightPower;
-        
+
         // Setting up Deadzones
         if ((leftAxis < 0.5) && (leftAxis > -0.5)) {
             lJoyStickVal = 0.0;
+            inLDeadZone = true;
         } else {
             lJoyStickVal = leftAxis;
         }
@@ -196,18 +199,33 @@ public class DriveTrain extends Subsystem {
         } else {
             rJoyStickVal = rightAxis;
         }
-        
-        // convert to left and right power
+
+        // convert to left and right power with floating point errors in mind
         leftPower = lJoyStickVal;
         rightPower = lJoyStickVal;
-        
-        
-        if (rJoyStickVal > 0){
-            leftPower = leftPower * rJoyStickVal;
-        } else {
-            rightPower = rightPower * Math.abs(rJoyStickVal);
+
+        if (rJoyStickVal < -0.01) {
+            leftPower = leftPower * (1 - rJoyStickVal);
+            leftPower = leftPower * -1;
+        } else if (rJoyStickVal > 0.01) {
+            rightPower = rightPower * (1 - Math.abs(rJoyStickVal));
         }
-        
+
+        // make robot turn left or right without moving forward if the y-axis of
+        // the left stick is in a dead zone
+        if (inLDeadZone) {
+
+            double pow = Math.abs(rJoyStickVal);
+
+            if (rJoyStickVal > 0.01) {
+                leftPower = -pow;
+                rightPower = pow;
+            } else if (rJoyStickVal < -0.01) {
+                leftPower = pow;
+                rightPower = -pow;
+            }
+        }
+
         drive.tankDrive(-leftPower, -rightPower);
         Timer.delay(0.005); // wait for a motor update time
     }
