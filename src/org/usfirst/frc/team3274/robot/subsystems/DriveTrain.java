@@ -141,7 +141,7 @@ public class DriveTrain extends Subsystem {
             rJoyStickVal = rightAxis;
         }
 
-        drive.tankDrive(lJoyStickVal, -rJoyStickVal);
+        drive.tankDrive(-1 * lJoyStickVal, -rJoyStickVal);
         Timer.delay(0.005); // wait for a motor update time
 
     }

@@ -17,7 +17,7 @@ public class RunTeleop extends CommandGroup {
     public RunTeleop() {
         // make the robot respond to joystick input for wheel
         // movement
-        addParallel(new DriveWithJoystick());
+        //addParallel(new DriveWithJoystick());
 
         // add other commands here
         // example: addSequential(new Command());
